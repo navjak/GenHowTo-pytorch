@@ -5,3 +5,4 @@ Pillow
 diffusers
 transformers
 accelerate
+bitsandbytes

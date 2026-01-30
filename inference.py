@@ -12,19 +12,20 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 def load_model(model_path):
     model = GenHowToModel()
-    
-    # load weights
-    state_dict = torch.load(model_path, map_location="cpu")
+    model.to(DEVICE) 
+
+    state_dict = torch.load(model_path, map_location=DEVICE)
     model.load_state_dict(state_dict, strict=False)
     print("Model loaded")
     
-    model.to(DEVICE)
+    del state_dict
+    torch.cuda.empty_cache()
+
     model.eval()
     return model
 
 
 def generate(model, img_path, prompt, steps=50, skip=2):
-    # Prepare Scheduler (DDIM)
     scheduler = DDIMScheduler.from_pretrained("Manojb/stable-diffusion-2-1-base", subfolder="scheduler")
     scheduler.set_timesteps(steps)
     
@@ -42,7 +43,8 @@ def generate(model, img_path, prompt, steps=50, skip=2):
     with torch.no_grad():
         z_src = model.vae.encode(src_tensor).latent_dist.sample() * model.vae.config.scaling_factor
 
-    # start from noisy z_src instead of pure random noise
+    # start from noisy z_src instead of pure random noise as mentioned in paper
+    # because we want to preserve structure and bg details of src image
 
     timesteps = scheduler.timesteps
     t_start = timesteps[skip]
@@ -65,7 +67,7 @@ def generate(model, img_path, prompt, steps=50, skip=2):
             step_output = scheduler.step(pred_noise, t, z_t) # step
             z_t = step_output.prev_sample
 
-    # decode image with VAE
+    # VAE decode
     with torch.no_grad():
         img_out = model.vae.decode(z_t / model.vae.config.scaling_factor).sample
         
@@ -77,8 +79,8 @@ def generate(model, img_path, prompt, steps=50, skip=2):
     return Image.fromarray(img_out)
 
 def main():
-    model_path = "/checkpoints/ght_epoch_9.pth"
-    test_img = "/data_dir/i_init/sample1.jpeg"
+    model_path = "./checkpoints/GHT_epoch_6.pth"
+    test_img = "./data_dir/i_init/sample1.jpeg"
     
     try:
         model = load_model(model_path)

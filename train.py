@@ -14,8 +14,8 @@ DATA_ROOT = config["DATA_ROOT"]
 OUTPUT_DIR = config["OUTPUT_DIR"]
 LR = config["LR"]
 EPOCHS = config["EPOCHS"]
-DEVICE = config["DEVICE"]
 STEPS_PER_LOG = config["STEPS_PER_LOG"]
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def main():

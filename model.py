@@ -26,7 +26,7 @@ class GenHowToModel(nn.Module):
         self.text_encoder.requires_grad_(False)
         self.unet.requires_grad_(False) # Freeze full unet initially
 
-        # unfreeze decoder only
+        # now unfreeze decoder only
         for p in self.unet.up_blocks.parameters(): p.requires_grad = True
         for p in self.unet.conv_norm_out.parameters(): p.requires_grad = True
         for p in self.unet.conv_out.parameters(): p.requires_grad = True
@@ -80,7 +80,6 @@ class GenHowToModel(nn.Module):
         t_emb = self.controlnet_enc['time_embedding'](t_emb)
         t_emb = t_emb.to(dtype=x.dtype)
 
-        # pre-process
         x = self.controlnet_enc['conv_in'](x)
         res_samples = [x]
 
@@ -142,7 +141,6 @@ class GenHowToModel(nn.Module):
     def forward(self, src, tgt, txt, t):
         # input src,tgt - [B, 3, 512, 512]
 
-        # Text encoding and CFG dropout
         if self.training and random.random() < 0.1:
             txt = [""] * len(src) # 10% dropout for cfg
 
