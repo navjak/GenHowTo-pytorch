@@ -77,7 +77,7 @@ def generate(model, img_path, prompt, steps=50, skip=2):
     return Image.fromarray(img_out)
 
 def main():
-    model_path = "/checkpoints/ght_epoch_1.pth"
+    model_path = "/checkpoints/ght_epoch_9.pth"
     test_img = "/data_dir/i_init/sample1.jpeg"
     
     try:

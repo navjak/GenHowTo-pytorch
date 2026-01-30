@@ -2,7 +2,7 @@
     "DATA_ROOT": "./data_dir",
     "OUTPUT_DIR": "./checkpoints",
     "LR": 0.0001,
-    "EPOCHS": 50,
+    "EPOCHS": 10,
     "DEVICE": "cuda",
     "STEPS_PER_LOG": 1
 }

@@ -221,7 +221,3 @@ __marimo__/
 *.pth
 *.bin
 *.ckpt
-
-
-data/
-datasets/
