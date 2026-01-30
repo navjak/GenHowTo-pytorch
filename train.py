@@ -27,7 +27,7 @@ def main():
     print(f"Epochs: {EPOCHS}")
 
     # handle data and create dataloader
-    dataset = GHTDataset(root=DATA_ROOT, train_final_state_model=False)
+    dataset = GHTDataset(root=DATA_ROOT, train_final_state_model=True)
     loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=0)
     print(f"Dataset size: {len(dataset)}")
 
@@ -68,10 +68,11 @@ def main():
 
             global_step += 1
 
-        # Save checkpoint per epoch
-        save_path = f"{OUTPUT_DIR}/GHT_epoch_{epoch+1}.pth"
-        torch.save(model.state_dict(), save_path)
-        print(f"checkpoint saved : {save_path}")
+        # save checkpoint every 3 epochs
+        if (epoch + 1) % 3 == 0:
+            save_path = f"{OUTPUT_DIR}/GHT_epoch_{epoch+1}.pth"
+            torch.save(model.state_dict(), save_path)
+            print(f"checkpoint saved : {save_path}")
 
 if __name__ == "__main__":
     main()

@@ -79,7 +79,7 @@ def generate(model, img_path, prompt, steps=50, skip=2):
     return Image.fromarray(img_out)
 
 def main():
-    model_path = "./checkpoints/GHT_epoch_6.pth"
+    model_path = "./checkpoints/GHT_epoch_30.pth"
     test_img = "./data_dir/i_init/sample1.jpeg"
     
     try:
@@ -89,7 +89,7 @@ def main():
         return
 
     # prompt for image
-    result = generate(model, test_img, "an apple in two pieces after being cut in half")
+    result = generate(model, test_img, "two apple halves on a cutting board")
     result.save("gen_img.png")
     print("Saved generated image")
 

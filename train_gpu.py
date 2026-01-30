@@ -81,7 +81,7 @@ def main():
         # save checkpoint every 3 epochs
         if (epoch + 1) % 3 == 0:
             unwrapped_model = accelerator.unwrap_model(model)
-            save_path = f"{OUTPUT_DIR}/checkpoint_epoch_{epoch+1}.pth"
+            save_path = f"{OUTPUT_DIR}/GHT_epoch_{epoch+1}.pth"
             torch.save(unwrapped_model.state_dict(), save_path)
             print(f"checkpoint saved : {save_path}")
 

@@ -2,6 +2,6 @@
     "DATA_ROOT": "./data_dir",
     "OUTPUT_DIR": "./checkpoints",
     "LR": 0.00002,
-    "EPOCHS": 15,
+    "EPOCHS": 30,
     "STEPS_PER_LOG": 1
 }
