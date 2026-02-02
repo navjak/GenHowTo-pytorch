@@ -63,8 +63,8 @@ def main():
             txt = batch['txt'] 
 
             # sample timesteps
-            bs = src.shape[0]
-            t = torch.randint(0, num_timesteps, (bs,), device=device).long()
+            batch_size = src.shape[0]
+            t = torch.randint(0, num_timesteps, (batch_size,), device=device).long()
 
             loss, pred = model(src, tgt, txt, t)
             
