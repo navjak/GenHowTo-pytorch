@@ -66,7 +66,7 @@ def main():
             bs = src.shape[0]
             t = torch.randint(0, num_timesteps, (bs,), device=device).long()
 
-            loss, _ = model(src, tgt, txt, t)
+            loss, pred = model(src, tgt, txt, t)
             
             opt.zero_grad()
             accelerator.backward(loss)

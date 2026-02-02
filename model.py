@@ -15,7 +15,7 @@ class GenHowToModel(nn.Module):
 
         self.vae = AutoencoderKL.from_pretrained(model_id, subfolder="vae") 
         self.tokenizer = CLIPTokenizer.from_pretrained(model_id, subfolder="tokenizer")
-        self.text_encoder = CLIPTextModel.from_pretrained(model_id, subfolder="text_encoder")
+        self.text_encoder = CLIPTextModel.from_pretrained(model_id, subfolder="text_encoder") 
 
         self.unet = UNet2DConditionModel.from_pretrained(model_id, subfolder="unet") # main UNet -> copy this to get Controlnet enc
         self.scheduler = DDPMScheduler.from_pretrained(model_id, subfolder="scheduler")
@@ -56,9 +56,9 @@ class GenHowToModel(nn.Module):
         emb = torch.randn(B, seq_len, embed_dim)
 
         with torch.no_grad():
-            dummy_res_samples, dummy_mid = self._forward_control_encoder(torch.randn(B, C, H, W), t, emb)
+            dummy_down_res, dummy_mid_res = self._forward_control_encoder(torch.randn(B, C, H, W), t, emb)
 
-        all_res = list(dummy_res_samples) + [dummy_mid]
+        all_res = list(dummy_down_res) + [dummy_mid_res]
 
         convs = nn.ModuleList()
         for res in all_res:
@@ -107,10 +107,10 @@ class GenHowToModel(nn.Module):
         # Text encoding
         tokens = self.tokenizer(
             txt,
-            padding="max_length",
-            max_length=self.tokenizer.model_max_length,
-            truncation=True,
-            return_tensors="pt"
+            padding = "max_length",
+            max_length = self.tokenizer.model_max_length,
+            truncation = True,
+            return_tensors = "pt"
         ).input_ids.to(z_src.device)
         
         emb_txt = self.text_encoder(tokens)[0] # [B, 77, 1024]
@@ -120,21 +120,21 @@ class GenHowToModel(nn.Module):
         
         ctrl_down_res, ctrl_mid_res = self._forward_control_encoder(z_cond, t, emb_txt)
         
-        # Apply Zero Convs
-        ctrl_down_fused = []
+        # Applying zero convs to all down blocks res and mid block res
+        ctrl_down_all = []
         num_down = len(ctrl_down_res)
         
         for i in range(num_down):
-            ctrl_down_fused.append(self.zero_convs[i](ctrl_down_res[i]))
+            ctrl_down_all.append(self.zero_convs[i](ctrl_down_res[i]))
             
-        ctrl_mid_fused = self.zero_convs[-1](ctrl_mid_res)
+        ctrl_mid_all = self.zero_convs[-1](ctrl_mid_res)
         
         # unet forward
         pred = self.unet(
             z_noisy, t,
-            encoder_hidden_states=emb_txt,
-            down_block_additional_residuals=ctrl_down_fused,
-            mid_block_additional_residual=ctrl_mid_fused).sample # [B, 4, 64, 64]
+            encoder_hidden_states = emb_txt,
+            down_block_additional_residuals= ctrl_down_all,
+            mid_block_additional_residual= ctrl_mid_all).sample # [B, 4, 64, 64]
         
         return pred
 

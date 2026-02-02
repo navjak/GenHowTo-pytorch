@@ -56,7 +56,7 @@ def main():
             bs = src.shape[0]
             t = torch.randint(0, num_timesteps, (bs,), device=DEVICE).long()
 
-            loss, _ = model(src, tgt, txt, t) # model returns (loss, pred)
+            loss, pred = model(src, tgt, txt, t) # model returns (loss, pred)
 
             optimizer.zero_grad()
             loss.backward()
