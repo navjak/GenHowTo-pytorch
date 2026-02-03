@@ -3,5 +3,6 @@
     "OUTPUT_DIR": "./checkpoints",
     "LR": 0.00002,
     "EPOCHS": 30,
-    "STEPS_PER_LOG": 1
+    "STEPS_PER_LOG": 1,
+    "TRAIN_FINAL_STATE_MODEL": true
 }

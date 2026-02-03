@@ -15,6 +15,7 @@ OUTPUT_DIR = config["OUTPUT_DIR"]
 LR = config["LR"]
 EPOCHS = config["EPOCHS"]
 STEPS_PER_LOG = config["STEPS_PER_LOG"]
+TRAIN_FINAL_STATE_MODEL = config["TRAIN_FINAL_STATE_MODEL"] # if true, final state model is trained
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
@@ -27,7 +28,7 @@ def main():
     print(f"Epochs: {EPOCHS}")
 
     # handle data and create dataloader
-    dataset = GHTDataset(root=DATA_ROOT, train_final_state_model=True)
+    dataset = GHTDataset(root=DATA_ROOT, train_final_state_model=TRAIN_FINAL_STATE_MODEL)
     loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=0)
     print(f"Dataset size: {len(dataset)}")
 

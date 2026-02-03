@@ -78,20 +78,31 @@ def generate(model, img_path, prompt, steps=50, skip=2):
     
     return Image.fromarray(img_out)
 
+import argparse
+
 def main():
-    model_path = "./checkpoints/GHT_epoch_30.pth"
-    test_img = "./data_dir/i_init/sample1.jpeg"
+    parser = argparse.ArgumentParser(description="GenHowTo Inference")
+    parser.add_argument("--model_path", type=str, required=True, help="Path to model checkpoint")
+    parser.add_argument("--img_path", type=str, required=True, help="Path to initial source image")
+    parser.add_argument("--prompt", type=str, required=True, help="Text prompt for generation")
+    parser.add_argument("--steps", type=int, default=50, help="Number of diffusion steps")
+    parser.add_argument("--skip", type=int, default=2, help="Number of timesteps to skip for noise init")
     
-    try:
-        model = load_model(model_path)
-    except FileNotFoundError:
-        print(f"ERROR - Model weights file not found.")
+    args = parser.parse_args()
+
+
+    if not os.path.exists(args.model_path):
+        print(f"ERROR - Model weights file not found at {args.model_path}")
         return
 
+    model = load_model(args.model_path)
+    
     # prompt for image
-    result = generate(model, test_img, "two apple halves on a cutting board")
-    result.save("gen_img.png")
-    print("Saved generated image")
+    result = generate(model, args.img_path, args.prompt, steps=args.steps, skip=args.skip)
+    
+    save_name = "gen_img.png"
+    result.save(save_name)
+    print(f"Saved generated image to {save_name}")
 
 if __name__ == "__main__":
     main()
