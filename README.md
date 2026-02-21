@@ -10,7 +10,7 @@ Click here for training and inference run on a T4 GPU: [Colab notebook](https://
 
 The original authors released inference-only code. This repository includes the missing training code, data loading, and optimization loops required to train the model from scratch.
 
-This implementation has been validated on a sample task (slicing an apple). The model successfully learned to generate the sliced state from a whole apple image given the prompt.
+This implementation has been validated via a **single-sample overfitting test** on a sample task (slicing an apple). The model successfully learned to generate the sliced state from a whole apple image given the prompt.
 
 ## Features
 
